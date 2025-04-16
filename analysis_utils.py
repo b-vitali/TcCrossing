@@ -1,6 +1,7 @@
 # analysis_utils.py
 
 import numpy as np
+import matplotlib.pyplot as plt
 import scipy.constants as const
 
 class analysis_Helper:
@@ -35,3 +36,38 @@ class analysis_Helper:
     def deltaLFit(self, temp, Tc, lLondon, l, eps, l0):
         dl = lLondon * np.sqrt(1 + eps / l) / np.sqrt(1 - (temp / Tc)**4) - l0
         return dl
+
+    # ---------------------- Plotting Methods ----------------------
+
+    def plot_frequency_vs_temp(self, df):
+        plt.figure()
+        plt.plot(df["Temp"], df["Freq"], '.')
+        plt.xlabel('Temperature [K]')
+        plt.ylabel('Frequency [Hz]')
+        plt.xlim([4, 11])
+        plt.ylim([6.4982e8, 6.4984e8])
+        plt.grid(True)
+        plt.title('Frequency vs Temperature')
+        plt.tight_layout()
+
+    def plot_q0_vs_temp(self, df):
+        plt.figure()
+        plt.plot(df["Temp"], df["Q0"], '.')
+        plt.xlabel('Temperature [K]')
+        plt.ylabel('$Q_0$')
+        plt.xlim([4, 11])
+        plt.grid(True)
+        plt.title('$Q_0$ vs Temperature')
+        plt.tight_layout()
+
+    def plot_dlambda_fit(self, temp, deltaL, fit_result):
+        plt.figure()
+        plt.plot(temp, deltaL * 1e10, label="Data")
+        plt.plot(temp, fit_result.best_fit, label="Fit")
+        plt.plot(temp, self.deltaLFit(temp, Tc-0.2, 1000, 1, 1, 0 ))
+        plt.xlabel("Temperature [K]")
+        plt.ylabel("$\Delta \lambda\ [\mathring{\mathrm{A}}]$")
+        plt.grid(True)
+        plt.legend()
+        plt.title("Delta Lambda Fit")
+        plt.tight_layout()
