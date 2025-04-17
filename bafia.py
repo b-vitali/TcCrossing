@@ -8,7 +8,7 @@ from analysis_utils import analysis_Helper  # <--- import helper
 
 # ---------------------- Constants & Setup ----------------------
 G = 150
-fileName = "20250128_FNAL_103.txt"
+fileName = "data/20250128_FNAL_103.txt"
 helper = analysis_Helper(G)  # <--- create instance
 
 # ---------------------- Load and Filter Data ----------------------

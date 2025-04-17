@@ -155,10 +155,10 @@ A Python script for calculating and plotting various superconducting properties 
 
 The script calculates the following:
 
-- **Real and imaginary parts of conductivity (σ₁ and σ₂)** as functions of temperature $ T $ and frequency $ \omega $.
+- **Real and imaginary parts of conductivity (σ₁ and σ₂)** as functions of temperature $T$ and frequency $\omega$.
 - **Quality factor (Q)**, which quantifies the resonance sharpness of a system.
-- **Frequency shift (Δf)** due to temperature variations.
-- **Superconducting energy gap (Δ)** as a function of temperature.
+- **Frequency shift ($\Delta$f)** due to temperature variations.
+- **Superconducting energy gap ($\Delta$)** as a function of temperature.
 
 ### Equations
 

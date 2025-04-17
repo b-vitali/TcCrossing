@@ -38,7 +38,7 @@ def deltaLFit(temp, Tc, lLondon, l, eps, l0):
 
 # ----------------------------- Load Data -----------------------------
 
-fileName = "FG004_throughTc.txt"
+fileName = "data/FG004_throughTc.txt"
 data = np.loadtxt(fileName, skiprows=4)
 temp = data[:, 1]
 MKS1000 = data[:, 2]
