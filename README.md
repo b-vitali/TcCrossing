@@ -64,9 +64,9 @@ helper = analysis_Helper(G=150)
 
 Calculates the surface resistance $R_s$ from the quality factor $Q$.
 
-$$
+$
 R_s = \frac{G}{Q}
-$$
+$
 
 #### `Xs(f, f0, X0)`
 
@@ -76,9 +76,9 @@ Calculates the surface reactance $X_s$ based on a frequency shift from a referen
 - `f0`: Reference frequency  
 - `X0`: Reference surface reactance
 
-$$
+$
 X_s = -2G \cdot \frac{f - f_0}{f_0} + X_0
-$$
+$
 
 #### `sigmaRX(Rs, Xs, freq0)`
 
@@ -88,9 +88,9 @@ Calculates the complex conductivity $\sigma = \sigma_1 + i\sigma_2$ using surfac
 - `Xs`: Surface reactance  
 - `freq0`: Reference frequency
 
-$$
+$
 \sigma = \omega \mu_0 \left( \frac{2 R_s X_s}{(R_s^2 + X_s^2)^2} + i \cdot \frac{X_s^2 - R_s^2}{(R_s^2 + X_s^2)^2} \right)
-$$
+$
 
 where:  
 - $\omega = 2\pi f_0$  
@@ -109,13 +109,13 @@ Estimates complex conductivity using the [Trunin approximation model](http://www
 - `Xs`: Surface reactance  
 - `Rn`: Normal-state resistance
 
-$$
+$
 \sigma_1 = \frac{4 R_n^2 R_s X_s}{(R_s^2 + X_s^2)^2}
-$$
+$
 
-$$
+$
 \sigma_2 = \frac{2 R_n^2 (X_s^2 - R_s^2)}{(R_s^2 + X_s^2)^2}
-$$
+$
 
 **Returns**:  
 - `sigma1`: Real part  
@@ -130,9 +130,9 @@ Calculates the change in London penetration depth from frequency shift measureme
 - `temp`: Corresponding temperatures  
 - `G`: Geometry factor (default: 192)
 
-$$
+$
 \Delta \lambda(T) = -\frac{G (f - f_0)}{\pi \mu_0 f_0^2}
-$$
+$
 
 where $f_0$ is the frequency at the base temperature (e.g., $T \leq 5\,K$).
 
@@ -147,9 +147,9 @@ Fits the change in penetration depth $\Delta \lambda(T)$ using a standard superc
 - `eps`: Dielectric constant factor  
 - `l0`: Reference penetration depth offset
 
-$$
+$
 \Delta \lambda(T) = \lambda_L \cdot \sqrt{1 + \frac{\varepsilon}{l}} \cdot \frac{1}{\sqrt{1 - \left(\frac{T}{T_c}\right)^4}} - \lambda_0
-$$
+$
 
 ### Example Visualizations:
 - Temperature vs Frequency plot.
@@ -181,9 +181,9 @@ The script calculates the following:
 
 The energy gap at zero temperature $ \Delta_0 $ is given by:
 
-$$
+$
 \Delta_0 = 1.764 k_B T_c
-$$
+$
 
 where $ k_B $ is the Boltzmann constant and $ T_c $ is the critical temperature.
 
@@ -191,39 +191,39 @@ where $ k_B $ is the Boltzmann constant and $ T_c $ is the critical temperature.
 
 The Fermi-Dirac distribution function $ f(E, T) $ is used to model the occupancy of energy states:
 
-$$
+$
 f(E, T) = \frac{1}{1 + e^{\frac{E}{k_B T}}}
-$$
+$
 
 #### Delta ($\Delta$) as a function of Temperature
 
 The superconducting energy gap $ \Delta(T) $ depends on the temperature as:
 
-$$
+$
 \Delta(T) = \Delta_0 \sqrt{1 - \frac{T}{T_c}}
-$$
+$
 
 #### Determinant and Numerical Functions
 
 The determinant function used in the calculation of conductivity is:
 
-$$
+$
 \text{det}(E, T) = (E + i \Gamma)^2 - \Delta(T)^2
-$$
+$
 
 where $ \Gamma $ is a phenomenological broadening factor.
 
 The numerators and Green's functions used in the conductivity expressions are:
 
-$$
+$
 f_{\text{numer}}(E, T) = (1 - 2 f(E + \hbar \omega, T))
-$$
+$
 
 and
 
-$$
+$
 g(E, T) = \frac{(E + i \Gamma)((E + i \Gamma) + \hbar \omega) + \Delta(T)^2}{\sqrt{(E + i \Gamma + \hbar \omega)^2 - \Delta(T)^2}}
-$$
+$
 
 #### Conductivity Calculations
 
@@ -233,9 +233,9 @@ The real and imaginary parts of the conductivity, $ \sigma_1 $ and $ \sigma_2 $,
 
 The quality factor $ Q $ is related to the conductivities and is given by:
 
-$$
+$
 Q = \frac{G}{Z_s + R_r}
-$$
+$
 
 where $G$ is the geometric-specific constant, $ Z_s $ is the impedance, and $ R_r $ is the residual resistance.
 
@@ -243,17 +243,17 @@ where $G$ is the geometric-specific constant, $ Z_s $ is the impedance, and $ R_
 
 The frequency shift due to temperature changes is given by:
 
-$$
+$
 \Delta f = -\frac{(\text{Im}(Z_s) - \frac{G}{Q}) \cdot f}{2 G}
-$$
+$
 
 #### Superconducting Energy Gap in MeV
 
 The energy gap $ \Delta(T) $ is converted into units of meV using:
 
-$$
+$
 \Delta(T) \ [\text{meV}] = \Delta(T) \ [\text{Joules}] \times 6.242 \times 10^{18}
-$$
+$
 
 ### Code Usage
 
