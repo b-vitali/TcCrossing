@@ -113,8 +113,9 @@ class SCconductivity:
         df = ((np.imag(self.Zs())-G/Q)*self.freq)/(-2*G)
         return df
     
+def joules_to_mev(energy_joules):
+    return energy_joules * 6.242e18  # Conversion factor from Joules to meV
 
-    
 if __name__ == '__main__':
     Tc = 9.2
     freq = 650e6
@@ -125,33 +126,55 @@ if __name__ == '__main__':
     Rr = 4e-9
 
     sc = SCconductivity(Tc, freq, Gamma, temp, sigman)
+
+    # First Plot: σ₁ and σ₂ vs Temperature/Tc
     fig, ax = plt.subplots()
     s1, s2 = sc.sigma()
-    p1, =ax.plot(temp/Tc, np.real(s1)/sigman, '-r', label = "$\sigma_1$")
+    p1, = ax.plot(temp/Tc, np.real(s1)/sigman, '-r', label="$\sigma_1$")
     ax1 = ax.twinx()
-    p2, = ax1.plot(temp/Tc, np.real(s2)/sigman, '-b', label = "$\sigma_2$")
-    fig.legend(loc="upper right", bbox_to_anchor=(1,1), bbox_transform=ax.transAxes)
-    ax.set_ylabel("$\sigma_1$", color='tab:red')
-    ax.tick_params(axis='y', labelcolor = 'tab:red')
-    ax1.set_ylabel("$\sigma_2$", color='tab:blue')
-    ax1.tick_params(axis='y', labelcolor = 'tab:blue')
-    plt.show()
+    p2, = ax1.plot(temp/Tc, np.real(s2)/sigman, '-b', label="$\sigma_2$")
     
+    # Add labels, title, grid, and legend
+    ax.set_xlabel('Temperature / Tc', fontsize=12)
+    ax.set_ylabel("$\sigma_1$", color='tab:red', fontsize=12)
+    ax1.set_ylabel("$\sigma_2$", color='tab:blue', fontsize=12)
+    ax.set_title('R/Im Conductivities vs Temperature (normalized to Tc)', fontsize=14)
+    ax.tick_params(axis='y', labelcolor='tab:red')
+    ax1.tick_params(axis='y', labelcolor='tab:blue')
+    ax.grid(True)
+    
+    fig.legend(loc="upper right", bbox_to_anchor=(1, 1), bbox_transform=ax.transAxes)
+    plt.tight_layout()  # Adjust layout to avoid overlap
+    plt.show()
+
+    # Second Plot: Q vs Temperature
     Q = sc.Q(G, Rr)
     plt.figure()
-    plt.semilogy(temp, Q)
-    plt.xlabel('Temperature [K]')
-    plt.ylabel('$Q_0$')
+    plt.semilogy(temp, Q, '-g')
+    plt.xlabel('Temperature [K]', fontsize=12)
+    plt.ylabel('$Q_0$', fontsize=12)
+    plt.title('Quality Factor (Q) vs Temperature', fontsize=14)
+    plt.grid(True, which='both', linestyle='--', color='gray', alpha=0.5)
+    plt.tight_layout()
     plt.show()
 
+    # Third Plot: Δf vs Temperature
     deltaf = sc.deltaf()
     plt.figure()
-    plt.plot(temp, deltaf)
-    plt.xlabel('Temperature [K]')
-    plt.ylabel('$\Delta$f [Hz]')
-    # plt.xlim([8, Tc])
+    plt.plot(temp, deltaf, '-m')
+    plt.xlabel('Temperature [K]', fontsize=12)
+    plt.ylabel('$\Delta f$ [Hz]', fontsize=12)
+    plt.title('Frequency Shift (Δf) vs Temperature', fontsize=14)
+    plt.grid(True)
+    plt.tight_layout()
     plt.show()
 
+    # Fourth Plot: Δ vs Temperature
     plt.figure()
-    plt.plot(temp, sc.Delta(temp))
+    plt.plot(temp, joules_to_mev(sc.Delta(temp)), '-c')
+    plt.xlabel('Temperature [K]', fontsize=12)
+    plt.ylabel('$\Delta$ [meV]', fontsize=12)
+    plt.title('Superconducting Energy Gap (Δ) vs Temperature', fontsize=14)
+    plt.grid(True)
+    plt.tight_layout()
     plt.show()

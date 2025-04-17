@@ -28,6 +28,7 @@ class analysis_Helper:
         sigma2 = 2 * Rn**2 * (Xs**2 - Rs**2) / (Rs**2 + Xs**2)**2
         return sigma1, sigma2, sigma1 + 1j * sigma2
 
+    #! Why a different G?
     def deltaLambda(self, freq, temp, G=192):
         f0 = freq[np.where(temp <= 5.0)[0][0]]
         dL = -G * (freq - f0) / (const.pi * const.mu_0 * f0**2)
@@ -61,6 +62,10 @@ class analysis_Helper:
         plt.tight_layout()
 
     def plot_dlambda_fit(self, temp, deltaL, fit_result):
+
+        #! Why do i need this here?
+        Tc = 9.2
+
         plt.figure()
         plt.plot(temp, deltaL * 1e10, label="Data")
         plt.plot(temp, fit_result.best_fit, label="Fit")
