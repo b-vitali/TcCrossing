@@ -97,71 +97,100 @@ class analysis_Helper:
         plt.tight_layout()
 
     def plot_freq_q0_dual(self, df, tempS, deltaf, Q):
-        fig, ax = plt.subplots(2, 1, figsize=(6, 6))
+        fig, ax = plt.subplots(2, 1)
 
-        # Frequency vs Temp + delta f (twin axis)
-        ax[0].plot(df["Temp"], df["Freq"] / 1e6, label="Resonant Freq")
+        # === Top Plot: Frequency & Delta f ===
+        # Frequency
+        line1, = ax[0].plot(df["Temp"], df["Freq"] / 1e1, label="Resonant Frequency", color='blue')
         ax[0].set_xlim([7, 9])
-        ax[0].set_ylabel("Frequency [MHz]")
-
-        ax1 = ax[0].twinx()
-        ax1.plot(tempS, deltaf / 1e6, '-.', color='orange', label="Δf")
-        ax1.set_xlim([7, 9])
-        ax1.set_ylabel("Δf [MHz]")
-
-        # Q0 vs Temp
-        ax[1].semilogy(df["Temp"], df["Q0"], label="Q₀ Data")
-        ax[1].semilogy(tempS, Q, '-', label="Q₀ Model")
-        ax[1].set_ylabel("Q$_0$")
-        ax[1].set_xlabel("Temperature [K]")
-
+        ax[0].set_ylabel("Frequency [Hz]")
         ax[0].grid(True)
+
+        # Delta f on twin axis
+        ax1 = ax[0].twinx()
+        line2, = ax1.plot(tempS, deltaf / 1e1, '-.', label="$\Delta f$", color='orange')
+        ax1.set_xlim([7, 9])
+        ax1.set_ylabel("$\Delta f$ [Hz]")
+
+        # Combine legends from both axes
+        lines = [line1, line2]
+        labels = [line.get_label() for line in lines]
+        ax[0].legend(lines, labels, loc='upper left')
+
+        # === Bottom Plot: Q0 ===
+        ax[1].semilogy(df["Temp"], df["Q0"], 'o', label="$Q_0$ Data", color='green', markersize=4)
+        ax[1].semilogy(tempS, Q, '-', label="Q₀ Model", color='purple')
+        ax[1].set_ylabel("$Q_0$")
+        ax[1].set_xlabel("Temperature [K]")
+        ax[1].legend(loc='best')
         ax[1].grid(True)
 
+        # === Figure Title ===
+        fig.suptitle("Frequency and $Q_0$ vs Temperature")
         plt.tight_layout()
 
     def plot_rs_xs_dual(self, df, tempS, RsData, ZsS, XsData):
-        fig, ax = plt.subplots(2, 1, figsize=(6, 6))
+        fig, ax = plt.subplots(2, 1)
 
-        # Rs plot
-        ax[0].semilogy(df["Temp"], RsData, label="Rs Data")
-        ax[0].semilogy(tempS, np.real(ZsS), label="Re(Zs)")
-        ax[0].set_ylabel("R$_s$ [$\Omega$]")
-        ax[0].legend()
+        # === Top Plot: Rs ===
+        line1, = ax[0].semilogy(df["Temp"], RsData, label="$R_s$ Data", color='tab:red')
+        line2, = ax[0].semilogy(tempS, np.real(ZsS), label="Re($Z_s$)", color='tab:blue')
+        ax[0].set_ylabel("$R_s$ [$\Omega$]")
         ax[0].grid(True)
 
-        # Xs plot
-        ax[1].plot(df["Temp"], XsData / 1e-3, label="Xs Data")
+        # Combine legends
+        lines = [line1, line2]
+        labels = [line.get_label() for line in lines]
+        ax[0].legend(lines, labels, loc='best')
+
+        # === Bottom Plot: Xs ===
+        line3, = ax[1].plot(df["Temp"], XsData / 1e-3, label="$X_s$ Data", color='tab:green')
         ax1 = ax[1].twinx()
-        ax1.plot(tempS, np.imag(ZsS) / 1e-3, 'c', label="Im(Zs)")
-        ax[1].set_ylabel("X$_s$ [m$\Omega$]")
+        line4, = ax1.plot(tempS, np.imag(ZsS) / 1e-3, '-.', label="Im($Z_s$)", color='tab:orange')
+        ax[1].set_ylabel("$X_s$ [m$\Omega$]")
         ax[1].set_xlabel("Temperature [K]")
-        ax[1].legend(loc="upper left")
-        ax1.legend(loc="upper right")
         ax[1].grid(True)
 
+        # Combine legends
+        lines = [line3, line4]
+        labels = [line.get_label() for line in lines]
+        ax[1].legend(lines, labels, loc='best')
+
+        # === Title ===
+        fig.suptitle("$R_s$ and $X_s$ vs Temperature")
         plt.tight_layout()
 
-    def plot_sigma_dual(self, df, tempS, Tc, sigma1, sigma2, sigma1T, sigma2T, s1S, s2S):
-        fig, ax = plt.subplots(2, 1, figsize=(6, 6))
 
-        # Sigma1 plot
-        ax[0].plot(df["Temp"] / Tc, sigma1 / 2e8, label="RX")
-        ax[0].plot(df["Temp"] / Tc, sigma1T, label="Trunin")
+    def plot_sigma_dual(self, df, tempS, Tc, sigma1, sigma2, sigma1T, sigma2T, s1S, s2S):
+        fig, ax = plt.subplots(2, 1)
+
+        # === Top Plot: Sigma1 ===
+        line1, = ax[0].plot(df["Temp"] / Tc, sigma1 / 2e8, label="RX", color='tab:blue')
+        line2, = ax[0].plot(df["Temp"] / Tc, sigma1T, label="Trunin", color='tab:green')
         ax0 = ax[0].twinx()
-        ax0.plot(tempS / Tc, s1S, linestyle="--", label="Mattis-Bardeen")
+        line3, = ax0.plot(tempS / Tc, s1S, '--', label="Mattis-Bardeen", color='tab:orange')
+
         ax[0].set_ylabel(r"$\sigma_1$")
-        ax[0].legend(loc="upper left")
-        ax0.legend(loc="upper right")
         ax[0].grid(True)
 
-        # Sigma2 plot
-        ax[1].plot(df["Temp"] / Tc, sigma2 / 2e8)
-        ax[1].plot(df["Temp"] / Tc, sigma2T)
+        lines = [line1, line2, line3]
+        labels = [line.get_label() for line in lines]
+        ax[0].legend(lines, labels, loc='best')
+
+        # === Bottom Plot: Sigma2 ===
+        line4, = ax[1].plot(df["Temp"] / Tc, sigma2 / 2e8, label="RX", color='tab:blue')
+        line5, = ax[1].plot(df["Temp"] / Tc, sigma2T, label="Trunin", color='tab:green')
         ax1 = ax[1].twinx()
-        ax1.plot(tempS / Tc, s2S)
+        line6, = ax1.plot(tempS / Tc, s2S, '--', label="Mattis-Bardeen", color='tab:orange')
+
         ax[1].set_ylabel(r"$\sigma_2$")
-        ax[1].set_xlabel("Temperature [K]")
+        ax[1].set_xlabel("Reduced Temperature $T/T_c$")
         ax[1].grid(True)
 
+        lines = [line4, line5, line6]
+        labels = [line.get_label() for line in lines]
+        ax[1].legend(lines, labels, loc='best')
+
+        # === Title ===
+        fig.suptitle(r"$\sigma_1$ and $\sigma_2$ vs Reduced Temperature")
         plt.tight_layout()
