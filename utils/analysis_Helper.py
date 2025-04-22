@@ -29,9 +29,9 @@ class analysis_Helper:
         return sigma1, sigma2, sigma1 + 1j * sigma2
 
     #! Why a different G?
-    def deltaLambda(self, freq, temp, G=192):
+    def deltaLambda(self, freq, temp):
         f0 = freq[np.where(temp <= 5.0)[0][0]]
-        dL = -G * (freq - f0) / (const.pi * const.mu_0 * f0**2)
+        dL = -self.G * (freq - f0) / (const.pi * const.mu_0 * f0**2)
         return dL
 
     def deltaLFit(self, temp, Tc, lLondon, l, eps, l0):
@@ -80,31 +80,28 @@ class analysis_Helper:
         plt.tight_layout()
 
     def plot_dlambda_fit(self, temp, deltaL, fit_result):
+        import matplotlib.pyplot as plt
+
         plt.figure()
-        plt.plot(temp, deltaL * 1e10, label="Data")
-        plt.plot(temp, fit_result.best_fit, label="Fit")
-        plt.xlabel("Temperature [K]")
-        plt.ylabel("$\Delta \lambda\ [\mathring{\mathrm{A}}]$")
-        plt.grid(True)
-        plt.legend()
-        plt.title("Delta Lambda Fit")
         
         # Extract fit parameters, uncertainties, and chi-squared value
         params = fit_result.params
         chi_squared = fit_result.chisqr
 
-        # Prepare the text to display in the corner
-        param_text = "\n".join([f"{param}: {params[param].value:.3e} ± {params[param].stderr:.3e}" for param in params])
-        chi_squared_text = f"$\chi^2$: {chi_squared:.3f}"
+        # Create the label for the fit line including parameters and chi-squared
+        param_lines = [f"{param}={params[param].value:.2e}±{params[param].stderr:.1e}" for param in params]
+        chi_squared_line = f"$\chi^2$={chi_squared:.2f}"
+        full_fit_label = "Fit:\n" + "\n".join(param_lines + [chi_squared_line])
 
-        # Combine everything into one string to show in the plot
-        fit_info = f"Fit Results:\n{param_text}\n{chi_squared_text}"
-        
-        # Add text box with fit results in the bottom-right corner
-        plt.gca().text(0.95, 0.05, fit_info, ha='right', va='bottom', 
-                    transform=plt.gca().transAxes, fontsize=8,  # Smaller font size
-                    bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=0.5'))
+        # Plot data and fit with updated legend label
+        plt.plot(temp, deltaL * 1e10, label="Data")
+        plt.plot(temp, fit_result.best_fit, label=full_fit_label)
 
+        plt.xlabel("Temperature [K]")
+        plt.ylabel("$\Delta \lambda\ [\mathring{\mathrm{A}}]$")
+        plt.grid(True)
+        plt.legend(loc="best", fontsize=8)
+        plt.title("Delta Lambda Fit")
         plt.tight_layout()
 
     def plot_freq_q0_dual(self, df, tempS, deltaf, Q):
