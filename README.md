@@ -8,6 +8,7 @@ The focus is on temperature and frequency-dependent properties.
 > [!WARNING]
 >
 > This is a work in progress and stuff might be wrong. 
+>
 > I will try to place references where possible for the different approximation and simulations.
 
 ## Overview
@@ -16,8 +17,8 @@ Aside from the data, markdown, .gitignore and legacy files, there are 4 scripts:
 
 ```
 📁 TcCrossing
-├── 📄 bafia.py
-├── 📄 fg004.py
+├── 🐍 bafia.py
+├── 🐍 fg004.py
 │
 ├── 📁 utils
 │ ├── 🐍 analysis_Helper.py
