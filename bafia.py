@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 import scipy.constants as const
 from lmfit import Model, Parameters
 
-import SCconductivity as sc
-from analysis_Helper import analysis_Helper
+from utils import SCconductivity as sc
+from utils.analysis_Helper import analysis_Helper
 
 # ---------------------- Constants & Setup ----------------------
 #! Here G=150, below is set to 192 ?!

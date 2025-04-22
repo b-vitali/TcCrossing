@@ -12,12 +12,20 @@ The focus is on temperature and frequency-dependent properties.
 
 ## Overview
 
-There are two main scripts in this repository and two 'utility':
+Aside from the data, markdown, .gitignore and legacy files, there are 4 scripts:
+
+📁 TcCrossing
+├── 📄 bafia.py
+├── 📄 fg004.py
+│
+├── 📁 utils
+│ ├── 🐍 analysis_Helper.py
+│ └── 🐍 SCconductivity.py
 
 1. **BAFIA (arXiv:2103.10601)**  
 2. **FG004 (Sertore 11-3-2024)**
 
-The two main scripts perform basically the same analysis on different data:
+These are the two main scripts perform basically the same analysis on different data:
 
 - **Frequency-dependent Analysis:** It computes the frequency dependence of resistance (`Rs`), reactance (`Xs`), and complex conductivity (`sigmaRX`). In the second there is an additional correction to the frequency using the pressure information (`MKS1000`)
 - **Modeling and Visualization:** The script utilizes the `SCconductivity` class for modeling the superconducting material's behavior and visualizes important properties such as frequency, temperature, and conductivity.

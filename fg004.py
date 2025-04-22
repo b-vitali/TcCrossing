@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 import scipy.constants as const
 from lmfit import Model, Parameters
 
-import SCconductivity as sc
-from analysis_Helper import analysis_Helper
+from utils import SCconductivity as sc
+from utils.analysis_Helper import analysis_Helper
 
 #? Change deltaLambda function in analysis_Helper
 class MyAnalysisHelper(analysis_Helper):
