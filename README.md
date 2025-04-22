@@ -14,6 +14,7 @@ The focus is on temperature and frequency-dependent properties.
 
 Aside from the data, markdown, .gitignore and legacy files, there are 4 scripts:
 
+```
 📁 TcCrossing
 ├── 📄 bafia.py
 ├── 📄 fg004.py
@@ -21,6 +22,7 @@ Aside from the data, markdown, .gitignore and legacy files, there are 4 scripts:
 ├── 📁 utils
 │ ├── 🐍 analysis_Helper.py
 │ └── 🐍 SCconductivity.py
+```
 
 1. **BAFIA (arXiv:2103.10601)**  
 2. **FG004 (Sertore 11-3-2024)**
