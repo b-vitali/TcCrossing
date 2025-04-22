@@ -7,12 +7,13 @@ import SCconductivity as sc
 from analysis_utils import analysis_Helper  # <--- import helper
 
 # ---------------------- Constants & Setup ----------------------
+#! Here G=150, below is set to 192 ?!
 G = 150
 fileName = "data/20250128_FNAL_103.txt"
 helper = analysis_Helper(G)  # <--- create instance
 
 # ---------------------- Load and Filter Data ----------------------
-df = pd.read_csv(fileName, sep=r'\s+', skiprows=4)
+df = pd.read_csv(fileName, sep=r'\s+')
 df.columns = ["Time", "Temp", "MKS1000", "LowerEdge1", "Bandwidth", "Freq", "Q0", "LowerEdge2", "Loss", "Max_Freq"]
 
 min_freq = df["Freq"].min()
@@ -21,16 +22,19 @@ df = df.query("Freq != @min_freq").reset_index(drop=True)
 Tc_guess = 9.2
 df_filtered = df.query("Temp >= @Tc_guess * 0.1 and Temp <= 9").reset_index(drop=True)
 
+# --------------------------- Derived Quantities ---------------------------
 RsData = helper.Rs(df_filtered["Q0"])
 sigman = G / df_filtered["Q0"].iloc[0]
 f0_ref = df_filtered["Freq"].iloc[0] + 11e3
 XsData = helper.Xs(df_filtered["Freq"], f0_ref, sigman)
+print(f"σₙ = {sigman:.4e}")
 
 # ---------------------- Sigma Calculation ----------------------
 sigma1, sigma2, sigma = helper.sigmaRX(RsData, XsData, df_filtered["Freq"].iloc[0])
 sigma1T, sigma2T, sigmaT = helper.sigmaTrunin(RsData, XsData, sigman)
 
 # ---------------------- SC Conductivity ----------------------
+#! What are these numbers
 freqS = 650e6
 Tc = 8.7
 tempS = np.linspace(2, Tc - 1e-3, 1000)

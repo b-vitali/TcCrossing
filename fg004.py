@@ -2,90 +2,55 @@
 # FG004 Analysis Script — 11-3-2024
 
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import scipy.constants as const
 from scipy.optimize import curve_fit
 from lmfit import Model, Parameters
-import SCconductivity as sc  # Ensure this module is available in the same directory
+import SCconductivity as sc
+from analysis_utils import analysis_Helper  # <--- import helper
 
-# ------------------------- Constants & Functions -------------------------
+#? Change deltaLambda function in analysis_Helper
+class MyAnalysisHelper(analysis_Helper):
+    def deltaLambda(self, freq, temp, G=192):
+        f0 = np.max(freq)
+        return -G * (freq - f0) / (const.pi * const.mu_0 * f0**2)
 
+# Use your custom version
+helper = MyAnalysisHelper(G=150)
+
+# ---------------------- Constants & Setup ----------------------
 G = 150
-
-def Rs(Q):
-    return G / Q
-
-def Xs(f, f0, X0):
-    return -2 * G * (f - f0) / f0 + X0
-
-def sigmaRX(Rs, Xs, freq0):
-    omega = 2 * np.pi * freq0
-    mu0 = const.mu_0
-    sigma = omega * mu0 * (2 * Rs * Xs / (Rs**2 + Xs**2)**2 + (Xs**2 - Rs**2) / (Rs**2 + Xs**2)**2 * 1j)
-    return np.real(sigma), np.imag(sigma), sigma
-
-def sigmaTrunin(Rs, Xs, Rn):
-    sigma1 = 4 * Rn**2 * Rs * Xs / (Rs**2 + Xs**2)**2
-    sigma2 = 2 * Rn**2 * (Xs**2 - Rs**2) / (Rs**2 + Xs**2)**2
-    return sigma1, sigma2, (sigma1 + 1j * sigma2)
-
-def deltaLambda(freq, temp, G=192):
-    f0 = np.max(freq)
-    return -G * (freq - f0) / (const.pi * const.mu_0 * f0**2)
-
-def deltaLFit(temp, Tc, lLondon, l, eps, l0):
-    return lLondon * np.sqrt(1 + eps / l) / np.sqrt(1 - (temp / Tc)**4) - l0
-
-# ----------------------------- Load Data -----------------------------
-
 fileName = "data/FG004_throughTc.txt"
-data = np.loadtxt(fileName, skiprows=4)
-temp = data[:, 1]
-MKS1000 = data[:, 2]
-freq1 = data[:, 5]
-Q0 = data[:, 6]
-freq = freq1 - 750 * (MKS1000 - 1000)
+helper = MyAnalysisHelper(G)  # <--- create instance
 
-# Clean out invalid entries
-mask = freq != freq.min()
-temp, freq, freq1, MKS1000, Q0 = temp[mask], freq[mask], freq1[mask], MKS1000[mask], Q0[mask]
+# ---------------------- Load and Filter Data ----------------------
+df = pd.read_csv(fileName, sep=r'\s+')
+df.columns = ["Time", "Temp", "MKS1000", "LowerEdge1", "Bandwidth", "Freq_raw", "Q0", "LowerEdge2", "Loss", "Max_Freq"]
+
+#! Correct the frequency using presusre information
+df["Freq"] = df["Freq_raw"] - 750 * (df["MKS1000"] - 1000)
+
+min_freq = df["Freq"].min()
+df = df.query("Freq != @min_freq").reset_index(drop=True)
+
+Tc_guess = 9.2
+df_filtered = df.query("Temp >= @Tc_guess * 0.1 and Temp <= 9").reset_index(drop=True)
 
 # --------------------------- Derived Quantities ---------------------------
-
-idx = np.where((temp <= 9) & (temp >= 0.1 * 9.2))
-RsData = Rs(Q0[idx])
-sigman = G / Q0[idx[0][0]]
+RsData = helper.Rs(df_filtered["Q0"])
+sigman = G / df_filtered["Q0"].iloc[0]
+f0_ref = df_filtered["Freq"].iloc[0] + 11e3
+XsData = helper.Xs(df_filtered["Freq"], f0_ref, sigman)
 print(f"σₙ = {sigman:.4e}")
 
-XsData = Xs(freq[idx], freq[np.min(idx)] + 11e3, sigman)
-sigma1, sigma2, sigma = sigmaRX(RsData, XsData, freq[np.min(idx)])
-sigma1T, sigma2T, sigmaT = sigmaTrunin(RsData, XsData, sigman)
-
-# ------------------------------ Raw Plots ------------------------------
-
-plt.figure()
-plt.plot(temp, freq, '.-', label="Corrected Freq")
-plt.plot(temp, freq1, 'o', label="Raw Freq")
-plt.xlabel('Temperature [K]')
-plt.ylabel('Frequency [Hz]')
-plt.xlim([4, 13])
-plt.legend()
-
-plt.figure()
-plt.semilogy(temp, Q0, '.')
-plt.xlabel('Temperature [K]')
-plt.ylabel('$Q_0$')
-plt.xlim([4, 13])
-
-plt.figure()
-plt.semilogy(temp, MKS1000 - 1000, '.')
-plt.xlabel('Temperature [K]')
-plt.ylabel('Pressure [mbar]')
-plt.xlim([4, 13])
+# ---------------------- Sigma Calculation ----------------------
+sigma1, sigma2, sigma = helper.sigmaRX(RsData, XsData, df_filtered["Freq"].iloc[0])
+sigma1T, sigma2T, sigmaT = helper.sigmaTrunin(RsData, XsData, sigman)
 
 # ----------------------------- SC Conductivity -----------------------------
-
-freqS = np.max(freq)
+#! What are these numbers
+freqS = df["Freq"].max()
 Tc = 8.9
 tempS = np.linspace(2, Tc - 1e-3, 1000)
 Gamma = 0.06 * 0.05
@@ -98,10 +63,30 @@ deltaf = mySc.deltaf()
 ZsS = mySc.Zs()
 s1S, s2S = mySc.sigma()
 
-# ---------------------------- Δλ Fit Section ----------------------------
+# ---------------------------- deltaLambda ----------------------------
+df_dl = df.query("Temp >= @Tc_guess * 0.1 and Temp <= @Tc - 0.3").reset_index(drop=True)
+deltaL = helper.deltaLambda(df_dl["Freq"], df_dl["Temp"])
 
-idx1 = np.where((temp <= Tc - 0.3) & (temp >= 0.1 * 9.2))
-deltaL = deltaLambda(freq[idx1], temp[idx1])
+# ---------------------- Plotting ----------------------
+
+plt.figure()
+plt.plot(df["Temp"], df["Freq"], '.-', label="Corrected Freq")
+plt.plot(df["Temp"], df["Freq_raw"], 'o', label="Raw Freq")
+plt.xlabel('Temperature [K]')
+plt.ylabel('Frequency [Hz]')
+plt.xlim([4, 13])
+plt.legend()
+
+helper.plot_q0_vs_temp(df)
+
+plt.figure()
+plt.semilogy(df["Temp"], df["MKS1000"] - 1000, '.')
+plt.xlabel('Temperature [K]')
+plt.ylabel('Pressure [mbar]')
+plt.xlim([4, 13])
+plt.show()
+
+####
 
 plt.figure()
 plt.plot(temp[idx1], deltaL * 1e10, '.-', label='Data')
