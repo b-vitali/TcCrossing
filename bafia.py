@@ -61,7 +61,7 @@ deltaL = helper.deltaLambda(df_dl["Freq"], df_dl["Temp"])
 # ---------------------- Fitting ----------------------
 gmodel = Model(helper.deltaLFit)
 params = Parameters()
-params.add('Tc', min=8.6, max=8.9, value=Tc)
+params.add('Tc', min=8.38, max=8.9, value=Tc)
 params.add('lLondon', min=100, max=2000, value=500)
 params.add('l', min=400, max=600, value=600)
 params.add('eps', min=0.1, max=600, value=620, vary=False)

@@ -80,19 +80,30 @@ class analysis_Helper:
         plt.tight_layout()
 
     def plot_dlambda_fit(self, temp, deltaL, fit_result):
-
-        #! Why do i need this here?
-        Tc = 9.2
-
         plt.figure()
         plt.plot(temp, deltaL * 1e10, label="Data")
         plt.plot(temp, fit_result.best_fit, label="Fit")
-        plt.plot(temp, self.deltaLFit(temp, Tc-0.2, 1000, 1, 1, 0 ))
         plt.xlabel("Temperature [K]")
         plt.ylabel("$\Delta \lambda\ [\mathring{\mathrm{A}}]$")
         plt.grid(True)
         plt.legend()
         plt.title("Delta Lambda Fit")
+        
+        # Extract fit parameters, uncertainties, and chi-squared value
+        params = fit_result.params
+        chi_squared = fit_result.chisqr
+
+        # Prepare the text to display in the corner
+        param_text = "\n".join([f"{param}: {params[param].value:.3e} ± {params[param].stderr:.3e}" for param in params])
+        chi_squared_text = f"$\chi^2$: {chi_squared:.3f}"
+
+        # Combine everything into one string to show in the plot
+        fit_info = f"Fit Results:\n{param_text}\n{chi_squared_text}"
+        
+        # Add text box with fit results in the bottom-right corner
+        plt.gca().text(0.95, 0.05, fit_info, ha='right', va='bottom', 
+                    transform=plt.gca().transAxes, fontsize=8,  # Smaller font size
+                    bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=0.5'))
 
         plt.tight_layout()
 
