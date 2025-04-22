@@ -1,14 +1,15 @@
-# fg004_analysis.py
-# FG004 Analysis Script — 11-3-2024
+# fg004.py
+# FG004 Analysis Script
+# Sertore 11-3-2024 -> bvitali 22-04-2025 
 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import scipy.constants as const
-from scipy.optimize import curve_fit
 from lmfit import Model, Parameters
+
 import SCconductivity as sc
-from analysis_utils import analysis_Helper  # <--- import helper
+from analysis_Helper import analysis_Helper
 
 #? Change deltaLambda function in analysis_Helper
 class MyAnalysisHelper(analysis_Helper):
@@ -16,10 +17,8 @@ class MyAnalysisHelper(analysis_Helper):
         f0 = np.max(freq)
         return -G * (freq - f0) / (const.pi * const.mu_0 * f0**2)
 
-# Use your custom version
-helper = MyAnalysisHelper(G=150)
-
 # ---------------------- Constants & Setup ----------------------
+#! Here G=150, below is set to 192 ?!
 G = 150
 fileName = "data/FG004_throughTc.txt"
 helper = MyAnalysisHelper(G)  # <--- create instance
@@ -64,6 +63,7 @@ ZsS = mySc.Zs()
 s1S, s2S = mySc.sigma()
 
 # ---------------------------- deltaLambda ----------------------------
+#! Is this tighter than df_filtered to improve the fit?
 df_dl = df.query("Temp >= @Tc_guess * 0.1 and Temp <= @Tc - 0.3").reset_index(drop=True)
 deltaL = helper.deltaLambda(df_dl["Freq"], df_dl["Temp"])
 
@@ -77,70 +77,16 @@ params.add('eps', min=0.1, max=600, value=620, vary=False)
 params.add('l0', min=100, max=600, value=610)
 
 result = gmodel.fit(deltaL * 1e10, temp=df_dl["Temp"], params=params)
+print(result.fit_report())
 
 # ---------------------- Plotting ----------------------
-
-plt.figure()
-plt.plot(df["Temp"], df["Freq"], '.-', label="Corrected Freq")
-plt.plot(df["Temp"], df["Freq_raw"], 'o', label="Raw Freq")
-plt.xlabel('Temperature [K]')
-plt.ylabel('Frequency [Hz]')
-plt.xlim([4, 13])
-plt.legend()
-
+helper.plot_frequency_vs_temp(df)
+helper.plot_pressure_vs_temp(df)
 helper.plot_q0_vs_temp(df)
-
-plt.figure()
-plt.semilogy(df["Temp"], df["MKS1000"] - 1000, '.')
-plt.xlabel('Temperature [K]')
-plt.ylabel('Pressure [mbar]')
-plt.xlim([4, 13])
-
 helper.plot_dlambda_fit(df_dl["Temp"], deltaL, result)
-
-print(result.fit_report())
 plt.show()
 
-# ---------------------------- Final Plots ----------------------------
-
-fig, ax = plt.subplots(2, 1)
-ax[0].plot(df_filtered["Temp"], df_filtered["Freq"] / 1e6)
-ax[0].set_xlim([7, 9])
-ax1 = ax[0].twinx()
-ax1.plot(tempS, deltaf / 1e6, '-.')
-ax1.set_xlim([7, 9])
-ax[0].set_ylabel("Frequency [MHz]")
-
-ax[1].semilogy(df_filtered["Temp"], df_filtered["Q0"])
-ax[1].semilogy(tempS, Q, '-')
-ax[1].set_ylabel("Q$_0$")
-ax[1].set_xlabel("Temperature [K]")
-
-fig, ax = plt.subplots(2, 1)
-ax[0].semilogy(df_filtered["Temp"], RsData)
-ax[0].semilogy(tempS, np.real(ZsS))
-ax[0].set_ylabel("R$_s$ [$\Omega$]")
-
-ax[1].plot(df_filtered["Temp"], XsData / 1e-3)
-ax1 = ax[1].twinx()
-ax1.plot(tempS, np.imag(ZsS) / 1e-3, 'c')
-ax[1].set_ylabel("X$_s$ [m$\Omega$]")
-ax[1].set_xlabel("Temperature [K]")
-
-fig, ax = plt.subplots(2, 1)
-ax[0].plot(df_filtered["Temp"] / Tc, sigma1 / 2e8, label="RX")
-ax[0].plot(df_filtered["Temp"] / Tc, sigma1T, label="Trunin")
-ax0 = ax[0].twinx()
-ax0.plot(tempS / Tc, s1S, linestyle="--", label="Mattis-Bardeen")
-ax[0].set_ylabel("$\sigma_1$")
-ax[0].legend()
-
-ax[1].plot(df_filtered["Temp"] / Tc, sigma2 / 2e8)
-ax[1].plot(df_filtered["Temp"] / Tc, sigma2T)
-ax1 = ax[1].twinx()
-ax1.plot(tempS / Tc, s2S)
-ax[1].set_ylabel("$\sigma_2$")
-ax[1].set_xlabel("Temperature [K]")
-
-plt.tight_layout()
+helper.plot_freq_q0_dual(df_filtered, tempS, deltaf, Q)
+helper.plot_rs_xs_dual(df_filtered, tempS, RsData, ZsS, XsData)
+helper.plot_sigma_dual(df_filtered, tempS, Tc, sigma1, sigma2, sigma1T, sigma2T, s1S, s2S)
 plt.show()

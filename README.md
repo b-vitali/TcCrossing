@@ -7,40 +7,26 @@ The focus is on temperature and frequency-dependent properties.
 
 > [!WARNING]
 >
-> This is a work in progress and stuff might be wrong. I will try to place references where possible for the different approximation and simulations.
+> This is a work in progress and stuff might be wrong. 
+> I will try to place references where possible for the different approximation and simulations.
 
 ## Overview
 
-There are two main scripts in this repository:
+There are two main scripts in this repository and two 'utility':
 
 1. **BAFIA (arXiv:2103.10601)**  
-2. **FG004 (11-3-2024)**
+2. **FG004 (Sertore 11-3-2024)**
 
-### 1. **BAFIA (arXiv:2103.10601)**
+The two main scripts perform basically the same analysis on different data:
 
-This script analyzes data from the BAFIA article. 
-The script includes:
-
-- **Frequency-dependent Analysis:** It computes the frequency dependence of resistance (`Rs`), reactance (`Xs`), and complex conductivity (`sigmaRX`).
+- **Frequency-dependent Analysis:** It computes the frequency dependence of resistance (`Rs`), reactance (`Xs`), and complex conductivity (`sigmaRX`). In the second there is an additional correction to the frequency using the pressure information (`MKS1000`)
 - **Modeling and Visualization:** The script utilizes the `SCconductivity` class for modeling the superconducting material's behavior and visualizes important properties such as frequency, temperature, and conductivity.
 - **Curve Fitting:** The script fits a delta lambda model to the data and optimizes the parameters using `lmfit`.
   
-Key calculations include:
-- Resistance as a function of the quality factor (`Rs`).
-- Complex conductivity calculation (`sigmaRX`).
-- Temperature dependence of the superconducting material.
-- Visualization of the temperature-frequency relationship, quality factor (`Q0`), and resistance/ reactance.
+3. **SCconductivity**
+4. **analysis_utils**
 
-### 2. **FG004 (11-3-2024)**
-
-The FG004 script is similar to the BAFIA script but uses different experimental data. 
-This script also calculates and visualizes the superconducting material's properties, with an emphasis on pressure and temperature dependence. 
-
-Key calculations include:
-- The same functions for `Rs` and `Xs` as in BAFIA, but with additional handling of the pressure data (`MKS1000`).
-- A similar model for complex conductivity (`sigmaRX`).
-- Frequency adjustments for pressure-dependent data.
-- Visualization of the pressure, temperature, frequency, quality factor (`Q0`), and superconductivity properties.
+The first is the script containing the tools to model and simulate the behaviour of the system while the second is a collection of tools for analyzing and representing the data.
 
 ## `analysis_Helper` Class
 
@@ -51,6 +37,9 @@ It includes methods for calculating surface impedance, complex conductivity, and
 <summary>Details on this script</summary>
 
 ### Initialization
+Simply import the `analysis_Helper.py` and create an istance of the class
+
+Through this you will access the different methods.
 
 ```python
 helper = analysis_Helper(G=150)
@@ -138,6 +127,7 @@ $$\Delta \lambda(T) = \lambda_L \cdot \sqrt{1 + \frac{\varepsilon}{l}} \cdot \fr
 
 ### Example Visualizations:
 - Temperature vs Frequency plot.
+- Temperature vs Pressure plot.
 - Temperature vs Quality Factor (`Q0`).
 - Temperature vs Resistance (`Rs`), Reactance (`Xs`), and Complex Conductivity (`sigma`).
 - Curve fitting of the delta lambda model to extract superconductivity parameters.
