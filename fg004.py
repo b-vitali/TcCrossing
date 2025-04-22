@@ -67,6 +67,17 @@ s1S, s2S = mySc.sigma()
 df_dl = df.query("Temp >= @Tc_guess * 0.1 and Temp <= @Tc - 0.3").reset_index(drop=True)
 deltaL = helper.deltaLambda(df_dl["Freq"], df_dl["Temp"])
 
+# ---------------------- Fitting ----------------------
+gmodel = Model(helper.deltaLFit)
+params = Parameters()
+params.add('Tc', min=8.6, max=8.9, value=Tc)
+params.add('lLondon', min=100, max=2000, value=500)
+params.add('l', min=400, max=600, value=600)
+params.add('eps', min=0.1, max=600, value=620, vary=False)
+params.add('l0', min=100, max=600, value=610)
+
+result = gmodel.fit(deltaL * 1e10, temp=df_dl["Temp"], params=params)
+
 # ---------------------- Plotting ----------------------
 
 plt.figure()
@@ -84,68 +95,52 @@ plt.semilogy(df["Temp"], df["MKS1000"] - 1000, '.')
 plt.xlabel('Temperature [K]')
 plt.ylabel('Pressure [mbar]')
 plt.xlim([4, 13])
-plt.show()
 
-####
-
-plt.figure()
-plt.plot(temp[idx1], deltaL * 1e10, '.-', label='Data')
-plt.plot(temp[idx1], deltaLFit(temp[idx1], Tc - 0.2, 1000, 1, 1, 0), label='Initial Guess')
-plt.xlabel("Temperature [K]")
-plt.ylabel("$\Delta \lambda\ [\mathring{\mathrm{A}}]$")
-plt.grid(True)
-
-gmodel = Model(deltaLFit)
-params = Parameters()
-params.add('Tc', min=8.6, max=8.9, value=Tc)
-params.add('lLondon', min=100, max=2000, value=500)
-params.add('l', min=400, max=600, value=600)
-params.add('eps', min=0.1, max=600, value=620, vary=False)
-params.add('l0', min=100, max=600, value=610)
-
-result = gmodel.fit(deltaL * 1e10, temp=temp[idx1], params=params)
+helper.plot_dlambda_fit(df_dl["Temp"], deltaL, result)
 
 print(result.fit_report())
-plt.plot(temp[idx1], result.best_fit, label='Fit')
-plt.legend()
+plt.show()
 
 # ---------------------------- Final Plots ----------------------------
 
 fig, ax = plt.subplots(2, 1)
-ax[0].plot(temp[idx], freq[idx] / 1e6, label='Data')
+ax[0].plot(df_filtered["Temp"], df_filtered["Freq"] / 1e6)
 ax[0].set_xlim([7, 9])
 ax1 = ax[0].twinx()
-ax1.plot(tempS, deltaf / 1e6, '-.', color='orange', label='MB model')
+ax1.plot(tempS, deltaf / 1e6, '-.')
 ax1.set_xlim([7, 9])
 ax[0].set_ylabel("Frequency [MHz]")
-ax[1].semilogy(temp[idx], Q0[idx])
+
+ax[1].semilogy(df_filtered["Temp"], df_filtered["Q0"])
 ax[1].semilogy(tempS, Q, '-')
 ax[1].set_ylabel("Q$_0$")
 ax[1].set_xlabel("Temperature [K]")
 
 fig, ax = plt.subplots(2, 1)
-ax[0].semilogy(temp[idx], RsData)
+ax[0].semilogy(df_filtered["Temp"], RsData)
 ax[0].semilogy(tempS, np.real(ZsS))
 ax[0].set_ylabel("R$_s$ [$\Omega$]")
-ax[1].plot(temp[idx], XsData / 1e-3)
+
+ax[1].plot(df_filtered["Temp"], XsData / 1e-3)
 ax1 = ax[1].twinx()
 ax1.plot(tempS, np.imag(ZsS) / 1e-3, 'c')
-ax[1].set_ylabel("X$_s$ [mΩ]")
+ax[1].set_ylabel("X$_s$ [m$\Omega$]")
 ax[1].set_xlabel("Temperature [K]")
 
 fig, ax = plt.subplots(2, 1)
-ax[0].plot(temp[idx] / Tc, sigma1 / 2e8)
-ax[0].plot(temp[idx] / Tc, sigma1T)
+ax[0].plot(df_filtered["Temp"] / Tc, sigma1 / 2e8, label="RX")
+ax[0].plot(df_filtered["Temp"] / Tc, sigma1T, label="Trunin")
 ax0 = ax[0].twinx()
-ax0.plot(tempS / Tc, s1S)
-ax[0].set_ylabel("σ₁")
+ax0.plot(tempS / Tc, s1S, linestyle="--", label="Mattis-Bardeen")
+ax[0].set_ylabel("$\sigma_1$")
+ax[0].legend()
 
-ax[1].plot(temp[idx] / Tc, sigma2 / 2e8)
-ax[1].plot(temp[idx] / Tc, sigma2T)
+ax[1].plot(df_filtered["Temp"] / Tc, sigma2 / 2e8)
+ax[1].plot(df_filtered["Temp"] / Tc, sigma2T)
 ax1 = ax[1].twinx()
 ax1.plot(tempS / Tc, s2S)
-ax[1].set_ylabel("σ₂")
-ax[1].set_xlabel("T / Tc")
+ax[1].set_ylabel("$\sigma_2$")
+ax[1].set_xlabel("Temperature [K]")
 
 plt.tight_layout()
 plt.show()
