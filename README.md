@@ -65,6 +65,10 @@ Calculates the surface reactance $X_s$ based on a frequency shift from a referen
 
 $$X_s = -2G \cdot \frac{f - f_0}{f_0} + X_0$$
 
+> [!TIP]
+>
+> Refer to: [arXiv:cond-mat/0110109](https://arxiv.org/abs/cond-mat/0110109)
+
 #### `sigmaRX(Rs, Xs, freq0)`
 
 Calculates the complex conductivity $\sigma = \sigma_1 + i\sigma_2$ using surface resistance and reactance.
@@ -84,9 +88,13 @@ where:
 - `sigma2`: Imaginary part  
 - `sigma`: Complex conductivity
 
+> [!TIP]
+>
+> Refer to: Electrodynamics of Solids: Optical Properties of Electrons in Matter. Cambridge University Press 2002
+
 #### `sigmaTrunin(Rs, Xs, Rn)`
 
-Estimates complex conductivity using the [Trunin approximation model](http://www.issp.ac.ru/lek/trunin/art60E.pdf).
+Estimates complex conductivity using the Trunin approximation.
 
 - `Rs`: Surface resistance  
 - `Xs`: Surface reactance  
@@ -100,6 +108,10 @@ $$\sigma_2 = \frac{2 R_n^2 (X_s^2 - R_s^2)}{(R_s^2 + X_s^2)^2}$$
 - `sigma2`: Imaginary part  
 - `sigma`: Complex conductivity
 
+> [!TIP]
+>
+> Refer to: [Trunin approximation model](http://www.issp.ac.ru/lek/trunin/art60E.pdf).
+
 #### `deltaLambda(freq, temp, G=192)`
 
 Calculates the change in London penetration depth from frequency shift measurements.
@@ -111,6 +123,10 @@ Calculates the change in London penetration depth from frequency shift measureme
 $$\Delta \lambda(T) = -\frac{G (f - f_0)}{\pi \mu_0 f_0^2}$$
 
 where $f_0$ is the frequency at the base temperature (e.g., $T \leq 5\,K$).
+
+> [!TIP]
+>
+> Refer to: [Brorson et al](https://arxiv.org/abs/cond-mat/9311027)
 
 #### `deltaLFit(temp, Tc, lLondon, l, eps, l0)`
 
@@ -124,6 +140,10 @@ Fits the change in penetration depth $\Delta \lambda(T)$ using a standard superc
 - `l0`: Reference penetration depth offset
 
 $$\Delta \lambda(T) = \lambda_L \cdot \sqrt{1 + \frac{\varepsilon}{l}} \cdot \frac{1}{\sqrt{1 - \left(\frac{T}{T_c}\right)^4}} - \lambda_0$$
+
+> [!TIP]
+>
+> Refer to: Ciovati's [SUPERFIT](https://www.researchgate.net/publication/255216727_SUPERFIT_a_Computer_Code_to_Fit_Surface_Resistance_and_Penetration_Depth_of_a_Superconductor) 
 
 ### Example Visualizations:
 - Temperature vs Frequency plot.
@@ -172,6 +192,13 @@ The superconducting energy gap $\Delta(T)$ depends on the temperature as:
 
 $$\Delta(T) = \Delta_0 \sqrt{1 - \frac{T}{T_c}}$$
 
+> [!CAUTION]
+>
+> This is an approx of the BCS equation, can I use it?
+> 
+> $$\Delta(T) \approx \Delta(0) \cdot \tanh\left[ 1.74 \sqrt{\frac{T_c}{T} - 1} \right]$$
+
+
 #### Determinant and Numerical Functions
 
 The determinant function used in the calculation of conductivity is:
@@ -188,9 +215,17 @@ and
 
 $$g(E, T) = \frac{(E + i \Gamma)((E + i \Gamma) + \hbar \omega) + \Delta(T)^2}{\sqrt{(E + i \Gamma + \hbar \omega)^2 - \Delta(T)^2}}$$
 
+> [!TIP]
+>
+> Refer to: Gor’kov equations, Green’s function formalism for superconductors and Mattis-Bardeen
+
 #### Conductivity Calculations
 
 The real and imaginary parts of the conductivity, $\sigma_1$ and $\sigma_2$, are computed by integrating the respective functions over the energy range.
+
+> [!TIP]
+>
+> Refer to: Mattis-Bardeen or Nam’s generalization of the BCS
 
 #### Quality Factor (Q)
 
