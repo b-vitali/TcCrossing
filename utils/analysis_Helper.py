@@ -43,7 +43,6 @@ class analysis_Helper:
         sigma2 = 2 * Rn**2 * (Xs**2 - Rs**2) / (Rs**2 + Xs**2)**2
         return sigma1, sigma2, sigma1 + 1j * sigma2
 
-    #! Why a different G?
     def deltaLambda(self, freq, temp):
         f0 = np.max(freq)
         return -self.G * (freq - f0) / (const.pi * const.mu_0 * f0**2)

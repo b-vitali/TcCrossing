@@ -15,8 +15,7 @@ import argparse
 import os
 
 # ---------------------- Constants & Setup ----------------------
-#! G = 192 ?!
-G = 192
+G = 195
 fileName = "data/FG004_throughTc.txt"
 
 parser = argparse.ArgumentParser(description="Run FG004 Analysis Script")
