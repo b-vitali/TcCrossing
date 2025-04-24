@@ -92,7 +92,7 @@ $$\Delta(T) \ [\text{meV}] = \Delta(T) \ [\text{Joules}] \times 6.242 \times 10^
 
 To use the code, simply initialize an instance of the `SCconductivity` class with the desired parameters, such as the critical temperature $T_c$, frequency $f$, broadening parameter $\Gamma$, and temperature array. The following example demonstrates how to plot various properties:
 
-```
+```python
 Tc = 9.2  # Critical temperature in K
 freq = 650e6  # Frequency in Hz
 temp = np.linspace(1.5, Tc - 1e-3, 1000)  # Temperature range from 1.5 K to Tc

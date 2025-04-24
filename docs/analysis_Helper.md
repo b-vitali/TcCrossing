@@ -9,7 +9,7 @@ Simply import the `analysis_Helper.py` and create an istance of the class
 Through this you will access the different methods
 
 
-```
+```python
 helper = analysis_Helper(G, save=save_plots)
 ```
 
@@ -23,7 +23,7 @@ helper = analysis_Helper(G, save=save_plots)
 
 This is a utility function to show or save generated plots.
 
-```
+```python
 def _handle_plot(self, filename):
     if self.save:
         full_path = os.path.join(self.save_dir, filename)

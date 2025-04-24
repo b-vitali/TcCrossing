@@ -29,7 +29,7 @@ Aside from the data, markdown, .gitignore and legacy files, there are 4 scripts:
 
 These are the two main scripts perform basically the same analysis on different data:
 
-- **Frequency-dependent Analysis:** It computes the frequency dependence of resistance (`Rs`), reactance (`Xs`), and complex conductivity (`sigmaRX`). In the second there is an additional correction to the frequency using the pressure information (`MKS1000`)
+- **Frequency-dependent Analysis:** It computes the frequency dependence of resistance (`Rs`), reactance (`Xs`), and complex conductivity (`sigmaRX`). The frequency is corrected using the pressure information (`MKS1000`)
 - **Modeling and Visualization:** The script utilizes the `SCconductivity` class for modeling the superconducting material's behavior and visualizes important properties such as frequency, temperature, and conductivity.
 - **Curve Fitting:** The script fits a delta lambda model to the data and optimizes the parameters using `lmfit`.
 
