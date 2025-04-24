@@ -12,14 +12,17 @@ from utils import SCconductivity as sc
 from utils.analysis_Helper import analysis_Helper
 
 # ---------------------- Constants & Setup ----------------------
-#! Here G=150, below is set to 192 ?!
-G = 150
+#! G = 192 ?!
+G = 192
 fileName = "data/20250128_FNAL_103.txt"
 helper = analysis_Helper(G)  # <--- create instance
 
 # ---------------------- Load and Filter Data ----------------------
 df = pd.read_csv(fileName, sep=r'\s+')
-df.columns = ["Time", "Temp", "MKS1000", "LowerEdge1", "Bandwidth", "Freq", "Q0", "LowerEdge2", "Loss", "Max_Freq"]
+df.columns = ["Time", "Temp", "MKS1000", "LowerEdge1", "Bandwidth", "Freq_raw", "Q0", "LowerEdge2", "Loss", "Max_Freq"]
+
+#? Correct the frequency using presusre information
+df["Freq"] = df["Freq_raw"] - 750 * (df["MKS1000"] - 1000)
 
 min_freq = df["Freq"].min()
 df = df.query("Freq != @min_freq").reset_index(drop=True)
@@ -45,7 +48,6 @@ Tc = 8.7
 tempS = np.linspace(2, Tc - 1e-3, 1000)
 Gamma = 0.06
 sigman_MB = 1 / (152e-9 * 1e-2)
-G = 192
 
 mySc = sc.SCconductivity(Tc, freqS, Gamma, tempS, sigman_MB)
 Q = mySc.Q()

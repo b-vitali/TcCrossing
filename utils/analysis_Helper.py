@@ -70,7 +70,7 @@ class analysis_Helper:
 
     def plot_q0_vs_temp(self, df):
         plt.figure()
-        plt.plot(df["Temp"], df["Q0"], '.')
+        plt.semilogy(df["Temp"], df["Q0"], '.')
         plt.xlabel('Temperature [K]')
         plt.ylabel('$Q_0$')
         plt.xlim([4, 11])

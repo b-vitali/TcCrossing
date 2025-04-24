@@ -18,8 +18,8 @@ class MyAnalysisHelper(analysis_Helper):
         return -G * (freq - f0) / (const.pi * const.mu_0 * f0**2)
 
 # ---------------------- Constants & Setup ----------------------
-#! Here G=150, below is set to 192 ?!
-G = 150
+#! G = 192 ?!
+G = 192
 fileName = "data/FG004_throughTc.txt"
 helper = MyAnalysisHelper(G)  # <--- create instance
 
@@ -27,7 +27,7 @@ helper = MyAnalysisHelper(G)  # <--- create instance
 df = pd.read_csv(fileName, sep=r'\s+')
 df.columns = ["Time", "Temp", "MKS1000", "LowerEdge1", "Bandwidth", "Freq_raw", "Q0", "LowerEdge2", "Loss", "Max_Freq"]
 
-#! Correct the frequency using presusre information
+#? Correct the frequency using presusre information
 df["Freq"] = df["Freq_raw"] - 750 * (df["MKS1000"] - 1000)
 
 min_freq = df["Freq"].min()
@@ -54,7 +54,6 @@ Tc = 8.9
 tempS = np.linspace(2, Tc - 1e-3, 1000)
 Gamma = 0.06 * 0.05
 sigman = 1 / (152e-9 * 1e-2)
-G = 192
 
 mySc = sc.SCconductivity(Tc, freqS, Gamma, tempS, sigman)
 Q = mySc.Q()
