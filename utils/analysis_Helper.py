@@ -30,9 +30,8 @@ class analysis_Helper:
 
     #! Why a different G?
     def deltaLambda(self, freq, temp):
-        f0 = freq[np.where(temp <= 5.0)[0][0]]
-        dL = -self.G * (freq - f0) / (const.pi * const.mu_0 * f0**2)
-        return dL
+        f0 = np.max(freq)
+        return -self.G * (freq - f0) / (const.pi * const.mu_0 * f0**2)
 
     def deltaLFit(self, temp, Tc, lLondon, l, eps, l0):
         dl = lLondon * np.sqrt(1 + eps / l) / np.sqrt(1 - (temp / Tc)**4) - l0

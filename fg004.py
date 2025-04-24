@@ -11,17 +11,11 @@ from lmfit import Model, Parameters
 from utils import SCconductivity as sc
 from utils.analysis_Helper import analysis_Helper
 
-#? Change deltaLambda function in analysis_Helper
-class MyAnalysisHelper(analysis_Helper):
-    def deltaLambda(self, freq, temp, G=192):
-        f0 = np.max(freq)
-        return -G * (freq - f0) / (const.pi * const.mu_0 * f0**2)
-
 # ---------------------- Constants & Setup ----------------------
 #! G = 192 ?!
 G = 192
 fileName = "data/FG004_throughTc.txt"
-helper = MyAnalysisHelper(G)  # <--- create instance
+helper = analysis_Helper(G)  # <--- create instance
 
 # ---------------------- Load and Filter Data ----------------------
 df = pd.read_csv(fileName, sep=r'\s+')
