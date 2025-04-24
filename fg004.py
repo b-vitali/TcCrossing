@@ -52,7 +52,7 @@ print(f"σₙ = {sigman:.4e}")
 sigma1, sigma2, sigma = helper.sigmaRX(RsData, XsData, df_filtered["Freq"].iloc[0])
 sigma1T, sigma2T, sigmaT = helper.sigmaTrunin(RsData, XsData, sigman)
 
-# ----------------------------- SC Conductivity -----------------------------
+# ---------------------- SC Conductivity ----------------------
 #! What are these numbers
 freqS = df["Freq"].max()
 Tc = 8.9
@@ -66,7 +66,7 @@ deltaf = mySc.deltaf()
 ZsS = mySc.Zs()
 s1S, s2S = mySc.sigma()
 
-# ---------------------------- deltaLambda ----------------------------
+# ---------------------- deltaLambda ----------------------
 #! Is this tighter than df_filtered to improve the fit?
 df_dl = df.query("Temp >= @Tc_guess * 0.1 and Temp <= @Tc - 0.3").reset_index(drop=True)
 deltaL = helper.deltaLambda(df_dl["Freq"], df_dl["Temp"])
@@ -84,7 +84,7 @@ gmodel = Model(helper.deltaLFit_simple)
 params = Parameters()
 params.add('Tc', min=df_dl["Temp"].max() + 0.01, max=8.9, value=Tc)
 params.add('A', min=0.1, max=5000, value=500)
-params.add('l0', min=100, max=600, value=610)
+params.add('l0', min=100, max=1200, value=610)
 
 result = gmodel.fit(deltaL * 1e10, temp=df_dl["Temp"], params=params)
 print(result.fit_report())
