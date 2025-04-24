@@ -16,7 +16,9 @@ import os
 
 # ---------------------- Constants & Setup ----------------------
 G = 195
-fileName = "data/FG004_throughTc.txt"
+folder = "data"
+filename = "FG004_throughTc"
+path = folder +"/"+ filename +".txt"
 
 parser = argparse.ArgumentParser(description="Run FG004 Analysis Script")
 parser.add_argument('--save', action='store_true', help="Save plots to the 'figs' folder")
@@ -26,10 +28,10 @@ save_plots = args.save
 if save_plots and not os.path.exists("figs"):
     os.makedirs("figs")
 
-helper = analysis_Helper(G, save=save_plots)  # <--- create instance
+helper = analysis_Helper(G, save=save_plots, filename = filename)  # <--- create instance
 
 # ---------------------- Load and Filter Data ----------------------
-df = pd.read_csv(fileName, sep=r'\s+')
+df = pd.read_csv(path, sep=r'\s+')
 df.columns = ["Time", "Temp", "MKS1000", "LowerEdge1", "Bandwidth", "Freq_raw", "Q0", "LowerEdge2", "Loss", "Max_Freq"]
 
 #? Correct the frequency using presusre information

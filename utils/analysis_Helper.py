@@ -6,17 +6,21 @@ import scipy.constants as const
 import os
 
 class analysis_Helper:
-    def __init__(self, G=150, save=False, save_dir="figs"):
+    def __init__(self, G=150, save=False, filename='data', save_dir="figs"):
         self.G = G
         self.save = save
+        self.filename = filename
         self.save_dir = save_dir
 
         if self.save and not os.path.exists(self.save_dir):
             os.makedirs(self.save_dir)
 
-    def _handle_plot(self, filename):
+    def _handle_plot(self, plotname):
+        fig = plt.gcf()  # Get the current figure
+        fig.text(0.98, 0.02, f"{self.filename}", ha='right', va='center', fontsize=10, color='black')
+
         if self.save:
-            full_path = os.path.join(self.save_dir, filename)
+            full_path = os.path.join(self.save_dir, plotname)
             plt.savefig(full_path)
             print(f"Saved plot to {full_path}")
             plt.close()
