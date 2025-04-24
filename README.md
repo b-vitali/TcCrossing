@@ -1,6 +1,5 @@
 # Superconductivity Analysis Scripts
 
-
 This repository of python scripts for analyzing superconductivity data.
 These scripts use experimental data to model and visualize the complex conductivity behavior.
 The focus is on temperature and frequency-dependent properties.
@@ -33,13 +32,21 @@ These are the two main scripts perform basically the same analysis on different 
 - **Frequency-dependent Analysis:** It computes the frequency dependence of resistance (`Rs`), reactance (`Xs`), and complex conductivity (`sigmaRX`). In the second there is an additional correction to the frequency using the pressure information (`MKS1000`)
 - **Modeling and Visualization:** The script utilizes the `SCconductivity` class for modeling the superconducting material's behavior and visualizes important properties such as frequency, temperature, and conductivity.
 - **Curve Fitting:** The script fits a delta lambda model to the data and optimizes the parameters using `lmfit`.
-  
+
+> [!TIP]
+> Run these with the flag `--save` to save the plots in the `figs` folder
+>
+> NB: the folder is in the .gitignore and not stored on this repo
+> ```
+> python3 bafia.py --save
+> ```
+
 3. **SCconductivity**
 4. **analysis_utils**
 
 The first is the script containing the tools to model and simulate the behaviour of the system while the second is a collection of tools for analyzing and representing the data.
 
-## `analysis_Helper` Class
+## `analysis_Helper` class
 
 The `analysis_Helper` class provides tools for analyzing superconducting resonator data. 
 It includes methods for calculating surface impedance, complex conductivity, and changes in penetration depth based on resonator measurements.
@@ -47,7 +54,7 @@ It includes methods for calculating surface impedance, complex conductivity, and
 📖 Read more: [Details on analysis_Helper](docs/analysis_Helper.md)
 
 
-## `SCconductivity` Class
+## `SCconductivity` class
 
 A Python script for calculating and plotting various superconducting properties such as the real and imaginary parts of conductivity, quality factor, frequency shift, and the superconducting energy gap.
 
