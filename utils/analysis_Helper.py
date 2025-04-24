@@ -10,7 +10,7 @@ class analysis_Helper:
         self.G = G
         self.save = save
         self.filename = filename
-        self.save_dir = save_dir
+        self.save_dir = save_dir+"/"+filename
 
         if self.save and not os.path.exists(self.save_dir):
             os.makedirs(self.save_dir)
