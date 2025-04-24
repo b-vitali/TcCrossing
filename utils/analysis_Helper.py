@@ -3,10 +3,25 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.constants as const
+import os
 
 class analysis_Helper:
-    def __init__(self, G=150):
+    def __init__(self, G=150, save=False, save_dir="figs"):
         self.G = G
+        self.save = save
+        self.save_dir = save_dir
+
+        if self.save and not os.path.exists(self.save_dir):
+            os.makedirs(self.save_dir)
+
+    def _handle_plot(self, filename):
+        if self.save:
+            full_path = os.path.join(self.save_dir, filename)
+            plt.savefig(full_path)
+            print(f"Saved plot to {full_path}")
+            plt.close()
+        else:
+            plt.show()
 
     def Rs(self, Q):
         return self.G / Q
@@ -56,6 +71,8 @@ class analysis_Helper:
         plt.title('Frequency vs Temperature')
         
         plt.tight_layout()
+        self._handle_plot("plot_frequency_vs_temp.png")
+
 
     def plot_pressure_vs_temp(self, df):
         plt.figure()
@@ -66,6 +83,7 @@ class analysis_Helper:
         plt.grid(True, which='both')
         plt.title('Pressure vs Temperature')
         plt.tight_layout()
+        self._handle_plot("plot_pressure_vs_temp.png")
 
     def plot_q0_vs_temp(self, df):
         plt.figure()
@@ -77,6 +95,7 @@ class analysis_Helper:
         plt.title('$Q_0$ vs Temperature')
 
         plt.tight_layout()
+        self._handle_plot("plot_q0_vs_temp.png")
 
     def plot_dlambda_fit(self, temp, deltaL, fit_result):
         import matplotlib.pyplot as plt
@@ -102,6 +121,7 @@ class analysis_Helper:
         plt.legend(loc="best", fontsize=8)
         plt.title("Delta Lambda Fit")
         plt.tight_layout()
+        self._handle_plot("plot_dlambda_fit.png")
 
     def plot_freq_q0_dual(self, df, tempS, deltaf, Q):
         fig, ax = plt.subplots(2, 1)
@@ -135,6 +155,7 @@ class analysis_Helper:
         # === Figure Title ===
         fig.suptitle("Frequency and $Q_0$ vs Temperature")
         plt.tight_layout()
+        self._handle_plot("plot_freq_q0_dual.png")
 
     def plot_rs_xs_dual(self, df, tempS, RsData, ZsS, XsData):
         fig, ax = plt.subplots(2, 1)
@@ -166,6 +187,7 @@ class analysis_Helper:
         # === Title ===
         fig.suptitle("$R_s$ and $X_s$ vs Temperature")
         plt.tight_layout()
+        self._handle_plot("plot_rs_xs_dual.png")
 
 
     def plot_sigma_dual(self, df, tempS, Tc, sigma1, sigma2, sigma1T, sigma2T, s1S, s2S):
@@ -201,3 +223,4 @@ class analysis_Helper:
         # === Title ===
         fig.suptitle(r"$\sigma_1$ and $\sigma_2$ vs Reduced Temperature")
         plt.tight_layout()
+        self._handle_plot("plot_sigma_dual.png")

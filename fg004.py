@@ -11,11 +11,23 @@ from lmfit import Model, Parameters
 from utils import SCconductivity as sc
 from utils.analysis_Helper import analysis_Helper
 
+import argparse
+import os
+
 # ---------------------- Constants & Setup ----------------------
 #! G = 192 ?!
 G = 192
 fileName = "data/FG004_throughTc.txt"
-helper = analysis_Helper(G)  # <--- create instance
+
+parser = argparse.ArgumentParser(description="Run FG004 Analysis Script")
+parser.add_argument('--save', action='store_true', help="Save plots to the 'figs' folder")
+args = parser.parse_args()
+save_plots = args.save
+
+if save_plots and not os.path.exists("figs"):
+    os.makedirs("figs")
+
+helper = analysis_Helper(G, save=save_plots)  # <--- create instance
 
 # ---------------------- Load and Filter Data ----------------------
 df = pd.read_csv(fileName, sep=r'\s+')
@@ -77,9 +89,7 @@ helper.plot_frequency_vs_temp(df)
 helper.plot_pressure_vs_temp(df)
 helper.plot_q0_vs_temp(df)
 helper.plot_dlambda_fit(df_dl["Temp"], deltaL, result)
-plt.show()
 
 helper.plot_freq_q0_dual(df_filtered, tempS, deltaf, Q)
 helper.plot_rs_xs_dual(df_filtered, tempS, RsData, ZsS, XsData)
 helper.plot_sigma_dual(df_filtered, tempS, Tc, sigma1, sigma2, sigma1T, sigma2T, s1S, s2S)
-plt.show()
