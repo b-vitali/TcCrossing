@@ -73,13 +73,19 @@ df_dl = df.query("Temp >= @Tc_guess * 0.1 and Temp <= @Tc - 0.3").reset_index(dr
 deltaL = helper.deltaLambda(df_dl["Freq"], df_dl["Temp"])
 
 # ---------------------- Fitting ----------------------
-gmodel = Model(helper.deltaLFit)
+# gmodel = Model(helper.deltaLFit)
+# params = Parameters()
+# params.add('Tc',  min=df_dl["Temp"].max() + 0.01, max=8.9, value=Tc)
+# params.add('lLondon', min=100, max=2000, value=500)
+# params.add('l', min=400, max=600, value=600)
+# params.add('eps', min=0.1, max=600, value=620, vary=False)
+# params.add('l0', min=100, max=600, value=610)
+
+gmodel = Model(helper.deltaLFit_simple)
 params = Parameters()
-params.add('Tc', min=8.38, max=8.9, value=Tc)
-params.add('lLondon', min=100, max=2000, value=500)
-params.add('l', min=400, max=600, value=600)
-params.add('eps', min=0.1, max=600, value=620, vary=False)
-params.add('l0', min=100, max=600, value=610)
+params.add('Tc', min=df_dl["Temp"].max() + 0.01, max=8.9, value=Tc)
+params.add('A', min=0.1, max=5000, value=500)
+params.add('l0', min=100, max=1200, value=610)
 
 result = gmodel.fit(deltaL * 1e10, temp=df_dl["Temp"], params=params)
 print(result.fit_report())

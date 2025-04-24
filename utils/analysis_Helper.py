@@ -52,6 +52,10 @@ class analysis_Helper:
         dl = lLondon * np.sqrt(1 + eps / l) / np.sqrt(1 - (temp / Tc)**4) - l0
         return dl
 
+    def deltaLFit_simple(self, temp, Tc, A, l0):
+        dl = A / np.sqrt(1 - (temp / Tc)**4) - l0
+        return dl
+
     # ---------------------- Plotting Methods ----------------------
 
     def plot_frequency_vs_temp(self, df):
